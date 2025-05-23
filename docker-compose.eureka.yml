@@ -1,0 +1,18 @@
+version: '2.4'
+
+services:
+  market-eureka-sv:
+    build: market-eureka-sv
+    mem_limit: 512m
+    ports:
+      - "8761:8761"
+    networks:
+      - 'plus-market-sv'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  plus-market-sv:

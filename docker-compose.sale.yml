@@ -1,0 +1,41 @@
+version: '2.4'
+
+services:
+  market-sale-sv:
+    build: market-sale-sv
+    ports:
+      - "9030:9030"
+    environment:
+      DB_URL: "${DB_URL_SALE}"
+      DB_USERNAME: "${DB_USERNAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      PRIVATE_KEY: "${PRIVATE_KEY}"
+      USER_GENERATOR: "${USER_GENERATOR}"
+      SS_USER: "${SS_USER}"
+      SS_PASSWORD: ${SS_PASSWORD}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://market-eureka-sv:8761/eureka/
+    depends_on:
+      market-eureka-sv:
+        condition: service_healthy
+      postgres-database-sale:
+        condition: service_healthy
+    networks:
+      - 'plus-market-sv'
+
+  postgres-database-sale:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: marketplus_sale_sv
+    networks:
+      - 'plus-market-sv'
+    healthcheck:
+      test: ["CMD", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  plus-market-sv:
+    external: true

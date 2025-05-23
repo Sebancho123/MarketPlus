@@ -1,0 +1,26 @@
+version: '2.4'
+
+services:
+  market-api-gateway-sv:
+    build: market-api-gateway-sv
+    ports:
+      - "443:443"
+    environment:
+      PRIVATE_KEY: "${PRIVATE_KEY}"
+      USER_GENERATOR: "${USER_GENERATOR}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://market-eureka-sv:8761/eureka/
+    depends_on:
+      market-eureka-sv:
+        condition: service_healthy
+    networks:
+      - 'plus-market-sv'
+    healthcheck:
+      test: ["CMD", "-h", "localhost",]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+
+networks:
+  plus-market-sv:
+    external: true
